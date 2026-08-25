@@ -52,7 +52,7 @@ export function Footer({ onSignup }: { onSignup: () => void }) {
             <ul className="mt-4 space-y-3 text-sm text-gray-text">
               <li className="flex items-start gap-2.5">
                 <Mail size={16} className="mt-0.5 shrink-0 text-sky" />
-                <span className="min-w-0 break-words">nexsport@gmail.com</span>
+                <span className="min-w-0 break-words">gobikaanubu08@gmail.com</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Phone size={16} className="mt-0.5 shrink-0 text-sky" />
