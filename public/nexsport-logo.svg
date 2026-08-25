@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160" role="img" aria-labelledby="title desc">
+  <title id="title">NexSport</title>
+  <desc id="desc">NexSport colorful geometric mark and wordmark</desc>
+  <rect width="520" height="160" rx="22" fill="#062957"/>
+  <g transform="translate(30 25)">
+    <path d="M0 57 42 18 91 72 39 72Z" fill="#18b7d5"/>
+    <path d="m91 72 43-44 32-20-9 42-49 38Z" fill="#08a9be"/>
+    <path d="m39 72 52 0-23 31-31-27Z" fill="#75d91c"/>
+    <path d="m91 72 58-49-11 61-44 34-25-26Z" fill="#74d91c"/>
+    <path d="m0 72 39 0-8 36-38 27Z" fill="#0b83be"/>
+  </g>
+  <text x="215" y="104" fill="#fff" font-family="Poppins, Arial, sans-serif" font-size="55" font-style="italic" font-weight="700">NexSport</text>
+</svg>

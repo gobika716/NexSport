@@ -1,0 +1,25 @@
+NexSport — Run locally
+
+1. Open a terminal in this project folder.
+
+2. Install dependencies (first time only):
+   npm install
+
+3. Create and seed the local SQLite database:
+   npm run db:setup
+
+   Demo account:
+   Email: demo@nexsport.app
+   Password: demo1234
+
+4. Start the development server:
+   npm run dev
+
+5. Open the local URL printed in the terminal (usually http://localhost:3000).
+
+Useful commands
+
+- npm run build       Create a production build
+- npm run lint        Check code style and linting
+- npm run db:migrate  Apply database migrations without reseeding
+

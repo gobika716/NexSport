@@ -1,0 +1,17 @@
+{
+  "short_name": "NexSport",
+  "name": "NexSport — Your Game, Your Team",
+  "icons": [
+    {
+      "src": "/nexsport-logo.svg",
+      "sizes": "520x160",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0b2d5c",
+  "theme_color": "#0b2d5c",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "Connect with sports enthusiasts through intelligent matchmaking, balanced team formation and performance tracking across 12 community sports."
+}

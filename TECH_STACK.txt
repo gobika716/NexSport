@@ -1,0 +1,426 @@
+================================================================================
+NEXSPORT - COMPLETE TECH STACK & USAGE GUIDE
+Project: d:/NexSport_ Your Game, Your Team
+Generated: Comprehensive reference for developers
+================================================================================
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+1.  PROJECT OVERVIEW
+2.  RUNTIME & PACKAGE MANAGER
+3.  FRONTEND FRAMEWORK (React 19 + Vite + TanStack)
+4.  ROUTING (TanStack Router)
+5.  SERVER FUNCTIONS (TanStack Start)
+6.  DATABASE (SQLite + Drizzle ORM)
+7.  STATE & DATA FETCHING (TanStack Query)
+8.  UI COMPONENT LIBRARY (shadcn/ui + Radix + Tailwind v4)
+9.  STYLING (Tailwind CSS v4)
+10. ANIMATIONS (Motion/Framer)
+11. FORMS & VALIDATION (React Hook Form + Zod)
+12. CHARTS (Recharts)
+13. AUTHENTICATION (localStorage + bcrypt)
+14. UTILITIES & HELPERS
+15. PROJECT DIRECTORY STRUCTURE
+16. HOW TO RUN / BUILD / LINT
+17. ENVIRONMENT & CONFIGURATION FILES
+18. FEATURE-FLOW MAP (which stack piece powers each feature)
+19. KNOWN MOCK vs REAL DATA
+20. SUGGESTED ENHANCEMENTS (IoT roadmap)
+
+================================================================================
+1. PROJECT OVERVIEW
+================================================================================
+NexSport ("Your Game, Your Team") is a community sports matchmaking app.
+Users create/join local match rooms, get auto-balanced teams (zig-zag
+algorithm), chat within rooms, give post-match feedback, and view a
+performance dashboard with an AI coach.
+
+Built with the TanStack ecosystem (React + Router + Start + Query) on Vite,
+using SQLite for persistence and Tailwind v4 + shadcn/ui for UI.
+
+================================================================================
+2. RUNTIME & PACKAGE MANAGER
+================================================================================
+Node.js  (v24.19.0 installed on this machine)
+  - JavaScript runtime for both dev server and build tooling.
+  - The project ships a bun.lock (created with Bun), but Node/npm works fine.
+
+Package manager:
+  - bun.lock / bunfig.toml exist -> project was authored with Bun.
+  - npm (via package.json) also works. Use `npm install`, `npm run dev`.
+  - NOTE on Windows: PowerShell blocks npm.ps1 scripts. Workaround:
+        npm.cmd install
+        npm.cmd run dev
+    or set execution policy, or use cmd.exe.
+
+Package.json key scripts:
+  "dev":        "vite dev"                 -> start dev server
+  "build":      "vite build"               -> production build
+  "build:dev":  "vite build --mode development"
+  "preview":    "vite preview"             -> serve built output
+  "lint":       "eslint ."
+  "format":     "prettier --write ."
+
+================================================================================
+3. FRONTEND FRAMEWORK (React 19 + Vite + TanStack)
+================================================================================
+React 19 (^19.2.0)
+  - Core UI library. Components in src/components/.
+  - Three layers: common/, layout/, landing/, dashboard/, rooms/, modals/, ui/.
+
+Vite 8 (^8.1.5)
+  - Build tool & dev server. Config in vite.config.ts.
+  - Uses @lovable.dev/vite-tanstack-config which bundles:
+      TanStack devtools, tanstackStart, viteReact, tailwindcss,
+      tsConfigPaths, nitro (cloudflare build target), VITE_* env injection,
+      @ path alias, React/TanStack dedupe, error logger plugins.
+
+Vite config (vite.config.ts):
+  tanstackStart.server.entry = "server"  -> uses src/server.ts as SSR entry.
+  importProtection.client.excludeFiles = ["**/server/**"]
+     -> allows src/server/* server functions to be imported client-side.
+
+TanStack Start (^1.168.32)
+  - Full-stack meta-framework on Vite. Provides SSR + server functions.
+  - Entry: src/start.ts (createStart) and src/server.ts (SSR error wrapper).
+
+================================================================================
+4. ROUTING (TanStack Router)
+================================================================================
+Library: @tanstack/react-router (^1.170.18) + @tanstack/router-plugin
+Route files: src/routes/*.tsx
+  index.tsx            -> Landing page
+  dashboard.tsx        -> Performance dashboard (auth-protected)
+  leaderboard.tsx      -> Leaderboard
+  profile.tsx          -> User profile
+  rooms.index.tsx      -> Match rooms list (auth-protected)
+  rooms.$roomId.tsx    -> Single room details (auth-protected)
+  __root.tsx           -> Root layout (provides AuthProvider, Toaster, Navbar)
+
+Codegen: src/routeTree.gen.ts (auto-generated, do not edit by hand).
+Each route exports `Route = createFileRoute("/path")({ head, component })`.
+  - head() sets SEO meta tags (title, description, og:).
+  - component() is the page component.
+
+Navigation:
+  - <Link to="/rooms/$roomId" params={{ roomId }}> for typed navigation.
+  - useRouter() for programmatic navigation (e.g., auth redirect).
+  - useParams({ from: "/rooms/$roomId" }) for route params.
+
+================================================================================
+5. SERVER FUNCTIONS (TanStack Start)
+================================================================================
+Library: @tanstack/react-start createServerFn
+Files: src/server/*.ts  (auth.ts, rooms.ts, chat.ts, feedback.ts)
+These are RPC-style functions that run ONLY on the server and call the DB.
+
+How they work:
+  - createServerFn({ method: "POST" }).validator(fn).handler(async ({data}) => {...})
+  - Client imports them directly and calls listRoomsFn({ data: {...} }).
+  - The framework compiles them into safe client calls (hashed RPC endpoints).
+  - Protected by CSRF middleware (see src/start.ts createCsrfMiddleware).
+
+Security:
+  - importProtection denies **/server/** in client env EXCEPT these files.
+  - CSRF filter applies to handlerType === "serverFn".
+  - Server-side validation via .validator() and Drizzle eq/where.
+
+================================================================================
+6. DATABASE (SQLite + Drizzle ORM)
+================================================================================
+Database file: nexsport.db (in project root, created at runtime).
+ORM: drizzle-orm (^? via bun.lock) + drizzle-kit (^0.31.10).
+Driver: better-sqlite3 (synchronous, via src/db/client.ts).
+
+Core DB files:
+  src/db/client.ts     -> opens SQLite, sets WAL + foreign_keys, exports db.
+  src/db/schema.ts     -> table definitions (users, rooms, room_members,
+                          messages, feedback).
+  src/db/migrate.ts    -> runs migrations.
+  src/db/seed.ts       -> seeds demo data (demo user + 5 rooms + chat).
+  src/db/verify.ts     -> verification helpers.
+  drizzle.config.ts    -> drizzle-kit config (schema, out, dialect sqlite,
+                          dbCredentials.url = ./nexsport.db).
+
+Tables (schema.ts):
+  users(id, name, email unique, password_hash, city, elo, created_at)
+rooms(id, sport, venue, city, distance_km, time, slots, filled, avg_elo,
+        skill, host, host_user_id, status [open|filling|closed],
+        description, lat, lng, created_at)
+        (lat/lng = real GPS coordinates captured from the creator's browser)
+  room_members(id, room_id FK->rooms, user_id FK->users nullable, name,
+               skill, joined_at)
+  messages(id, room_id FK->rooms, author, initials, text, time, user_id,
+           is_me bool, system bool, created_at)
+  feedback(id, room_id FK->rooms, user_id FK->users nullable, sport, venue,
+           date, skill, fairness int, teammates int, performance int,
+           result [Win|Loss|Draw], comment, created_at)
+
+Drizzle Studio (browser DB viewer):
+  npx drizzle-kit studio --port 4983  -> opens https://local.drizzle.studio
+  (already running in the dev environment)
+
+================================================================================
+7. STATE & DATA FETCHING (TanStack Query)
+================================================================================
+Library: @tanstack/react-query (^5.101.1)
+Used to fetch/cache server-function results and keep UI in sync.
+
+Pattern in pages:
+  const { data, isLoading } = useQuery({
+    queryKey: ["rooms"],                       // unique key
+    queryFn: () => listRoomsFn(),              // server fn
+  });
+  const queryClient = useQueryClient();
+  await queryClient.invalidateQueries({ queryKey: ["rooms"] }); // refetch
+
+Key query keys used:
+  ["rooms"]                       -> list of rooms
+  ["rooms", roomId]               -> single room
+  ["messages", roomId]            -> room chat messages
+  ["feedback", userId]            -> user's feedback
+
+================================================================================
+8. UI COMPONENT LIBRARY (shadcn/ui + Radix + Tailwind v4)
+================================================================================
+shadcn/ui components live in src/components/ui/*.tsx (generated).
+Built on @radix-ui primitives (dialog, dropdown, tabs, select, avatar,
+tooltip, sheet, etc.) + class-variance-authority + tailwind-merge.
+
+Common UI used across the app:
+  src/components/ui/button.tsx, card.tsx, dialog.tsx, input.tsx,
+  label.tsx, select.tsx, tabs.tsx, avatar.tsx, sonner.tsx, etc.
+
+Custom building blocks:
+  src/components/common/       -> Button, Icon, Reveal, SectionHeading
+  src/components/layout/PageShell.tsx -> page wrapper (eyebrow, title, nav)
+  src/components/modals/       -> AuthModal, CreateMatchModal, JoinRoomModal,
+                                  MatchFeedbackModal, ModalShell
+  src/components/rooms/        -> RoomChat, TeamRoster, TeamBalanceCharts
+  src/components/dashboard/    -> AiCoachPanel, FeedbackPanel, ScheduleCalendar
+
+Toast notifications: sonner (toast.success/error).
+
+================================================================================
+9. STYLING (Tailwind CSS v4)
+================================================================================
+Library: tailwindcss (^4.2.1) + @tailwindcss/vite + tw-animate-css.
+Global CSS: src/styles.css (uses @theme / @import "tailwindcss").
+Custom design tokens (colors, fonts) defined in styles.css:
+  - navy, sky, lime, lime-deep, ink, gray-text, border, accent, etc.
+  - .gradient-blue, .card-soft, .font-display utilities.
+
+Tailwind v4 specifics:
+  - No tailwind.config.js; config lives in CSS via @theme.
+  - Vite plugin handles scanning.
+
+Components.json: shadcn/ui config (aliases, style, tailwind).
+
+================================================================================
+10. ANIMATIONS (Motion)
+================================================================================
+Library: motion (^12.43.0) - modern Framer Motion.
+Used for:
+  - Room card layout/enter/exit animations (AnimatePresence).
+  - AI Coach insight transitions (mode="wait").
+  - Form progress bars (motion.div width animation).
+  - Reveal component for scroll-in animations on the landing page.
+
+================================================================================
+11. FORMS & VALIDATION (React Hook Form + Zod)
+================================================================================
+Library: react-hook-form (^7.71.2) + @hookform/resolvers + zod (^3.24.2).
+Used inside modals (AuthModal, CreateMatchModal, JoinRoomModal,
+MatchFeedbackModal) for:
+  - Controlled inputs, validation rules, error messages.
+  - Zod schemas via zodResolver for typed/validated submissions.
+
+================================================================================
+12. CHARTS (Recharts)
+================================================================================
+Library: recharts (^2.15.4).
+Used in the dashboard (src/routes/dashboard.tsx):
+  - LineChart   -> Elo rating over time
+  - PieChart    -> Sport split
+  - BarChart    -> Weekly wins vs losses
+  - RadarChart  -> Skill profile (you vs average)
+  - TeamBalanceCharts (rooms) uses charts for team balance visualization.
+Data sources: src/data/performanceData.ts (mock).
+
+================================================================================
+13. AUTHENTICATION (localStorage + bcrypt)
+================================================================================
+Server-side (src/server/auth.ts):
+  - loginFn: finds user by email, bcrypt.compare(password, hash).
+  - signupFn: bcrypt.hash(password, 10), inserts user, guards duplicate email.
+Client-side (src/lib/auth.tsx):
+  - AuthProvider context holds user state.
+  - Persists session in localStorage under key "nexsport_auth".
+  - login()/signup() call server fns, then applyUser() saves to localStorage.
+  - logout() clears localStorage.
+  - useRequireAuth() hook: redirects to "/" + opens login modal if unauthenticated.
+Protected routes: /rooms, /dashboard, /profile, /leaderboard.
+
+NOTE: This is a prototype session (localStorage), NOT a secure cookie/JWT.
+For production, replace with HttpOnly cookies + sessions.
+
+================================================================================
+14. UTILITIES & HELPERS
+================================================================================
+src/lib/utils.ts        -> cn() (clsx + tailwind-merge)
+src/lib/teamBalance.ts  -> rosterFor() + zigZagBalance() (team balancing algo)
+src/lib/mockStore.ts    -> mock store (fallback/data)
+src/lib/auth.tsx        -> auth context/provider/hooks
+src/lib/error-capture.ts, error-page.ts, lovable-error-reporting.ts
+                        -> error handling + SSR error page rendering
+src/hooks/use-mobile.tsx-> responsive hook
+src/hooks/use-geolocation.ts -> useGeolocation() (browser GPS wrapper) +
+                           haversineKm() + formatDistanceKm()
+src/data/*.ts           -> mock/demo data (sports, rooms, chat, coach,
+                           performance, leaderboard, profile, schedule,
+                           testimonials, algorithm, sportRules)
+src/types/index.ts      -> shared TypeScript types
+
+================================================================================
+15. PROJECT DIRECTORY STRUCTURE
+================================================================================
+├── public/                      -> static assets (favicon, robots.txt)
+├── src/
+│   ├── assets/                  -> images (sports, logo, hero)
+│   ├── components/
+│   │   ├── common/              -> Button, Icon, Reveal, SectionHeading
+│   │   ├── dashboard/           -> AiCoachPanel, FeedbackPanel, ScheduleCalendar
+│   │   ├── landing/             -> Navbar, Hero, Features, Footer, etc.
+│   │   ├── layout/              -> PageShell
+│   │   ├── modals/              -> Auth, CreateMatch, JoinRoom, Feedback, Shell
+│   │   ├── rooms/               -> RoomChat, TeamRoster, TeamBalanceCharts
+│   │   └── ui/                  -> shadcn/ui generated components
+│   ├── data/                    -> mock/demo data files
+│   ├── db/                      -> client, schema, migrate, seed, verify
+│   ├── hooks/                   -> use-mobile, use-geolocation
+│   ├── lib/                     -> utils, auth, teamBalance, error helpers
+│   ├── routes/                  -> TanStack Router file-based routes
+│   ├── server/                  -> server functions (auth, rooms, chat, feedback)
+│   └── start.ts, server.ts, styles.css, router.tsx
+├── drizzle/                     -> generated migrations
+├── nexsport.db                  -> SQLite database (runtime)
+├── vite.config.ts, drizzle.config.ts, tsconfig.json, components.json
+├── package.json, bun.lock, bunfig.toml
+└── .gitignore, .prettierrc, .prettierignore, eslint.config.js, AGENTS.md
+
+================================================================================
+16. HOW TO RUN / BUILD / LINT
+================================================================================
+Install dependencies:
+  npm.cmd install          (Windows PowerShell safe)
+  # or: bun install
+
+Run dev server:
+  npm.cmd run dev          -> usually http://localhost:3000 (or 5173/8080)
+  # or: npm run dev
+
+Production build:
+  npm run build            -> vite build (output to dist/)
+  npm run preview          -> serve the built output
+
+Lint:
+  npm run lint             -> eslint .
+
+Format:
+  npm run format           -> prettier --write .
+
+View database visually:
+  npx drizzle-kit studio --port 4983  -> https://local.drizzle.studio
+
+Quick DB dump (helper script I added):
+  node view-db.cjs          -> prints all tables
+  node view-db.cjs rooms    -> just rooms
+
+================================================================================
+17. ENVIRONMENT & CONFIGURATION FILES
+================================================================================
+package.json      -> deps, scripts
+tsconfig.json     -> TS config (paths @ -> src)
+vite.config.ts    -> Vite + TanStack Start config
+drizzle.config.ts -> Drizzle kit config (schema/out/db url)
+bunfig.toml       -> Bun install options (24h supply-chain guard)
+bun.lock          -> Bun lockfile
+components.json   -> shadcn/ui config
+eslint.config.js  -> ESLint flat config
+.prettierrc       -> Prettier config
+.gitignore        -> VCS ignores (node_modules, dist, nexsport.db likely)
+AGENTS.md         -> project agent guidance
+
+================================================================================
+18. FEATURE-FLOW MAP (stack piece -> feature)
+================================================================================
+Landing page        -> React components (landing/) + motion + Tailwind
+Auth (login/signup)-> AuthModal + react-hook-form/zod + server/auth.ts
+                      + bcrypt + SQLite users + localStorage (lib/auth.tsx)
+Rooms list          -> rooms.index.tsx + listRoomsFn + TanStack Query + SQLite
+Create room         -> CreateMatchModal + createRoomFn + SQLite rooms
+Join room           -> JoinRoomModal + joinRoomFn + SQLite room_members/rooms/
+                      messages (system msg)
+Room details        -> rooms.$roomId.tsx + getRoomFn + rosterFor (mock) +
+                      zigZagBalance + sportRules + useGeolocation (real GPS)
+                      + haversineKm (real distance)
+Room chat           -> RoomChat + listMessagesFn/sendMessageFn + SQLite messages
+Post-match feedback -> MatchFeedbackModal + addFeedbackFn + SQLite feedback +
+                      FeedbackPanel reads via listFeedbackFn
+Dashboard charts    -> Recharts + performanceData.ts (MOCK)
+AI Coach            -> AiCoachPanel + coachData.ts (MOCK)
+Team balancing      -> lib/teamBalance.ts zigZagBalance (real algorithm, mock rosters)
+
+================================================================================
+19. KNOWN MOCK vs REAL DATA
+================================================================================
+REAL (persistent / live):
+  - Users (auth)
+  - Rooms (create/list/join)
+  - Room memberships
+  - Chat messages
+  - Post-match feedback
+  - GPS coordinates (navigator.geolocation -> real lat/lng stored per room)
+  - Distance-from-user (Haversine computed live when GPS is granted)
+
+MOCK (static, prototype placeholders):
+  - Room participant rosters (rosterFor)
+  - Dashboard analytics (performanceData.ts)
+  - AI Coach insights (coachData.ts)
+  - Leaderboard, profile history, testimonial data
+  - Stored distance_km fallback (shown only when GPS unavailable)
+
+================================================================================
+20. SUGGESTED ENHANCEMENTS (IoT & real-data roadmap)
+================================================================================
+Phase 1 - Real GPS:  [DONE - implemented in src/hooks/use-geolocation.ts]
+  - navigator.geolocation -> real lat/lng CAPTURED (useGeolocation)
+  - Haversine distance -> DONE (haversineKm + formatDistanceKm)
+  - lat/lng columns in rooms -> DONE, stored per-room on create
+  - mockCoords -> REMOVED from rooms.$roomId.tsx
+  - Remaining: embedded interactive map (Leaflet/Mapbox)
+
+Phase 2 - Wearables / Live metrics:
+  - Web Bluetooth (navigator.bluetooth) heart-rate monitor; Fitbit/Garmin/Apple
+    Health / Google Fit APIs. New player_metrics table (heart_rate, steps,
+    calories, distance). Feed real data into dashboard charts + AI coach.
+
+Phase 3 - Venue IoT:
+  - ESP32 + MQTT sensors (occupancy, lighting, weather) -> auto-update room
+    availability; show "playability index". Node.js MQTT/WebSocket bridge.
+
+Phase 4 - Real AI Coach:
+  - Aggregate real metrics + feedback + Elo; server-side LLM call (OpenAI) to
+    generate insights; replace coachData.ts mock.
+
+Phase 5 - Realtime sync:
+  - SSE/WebSocket for live chat, check-ins, and heart-rate zones without manual
+    refresh (currently pull-based via TanStack Query).
+
+Phase 6 - (Optional) On-chain fair-play:
+  - Store match results + Elo changes on a ledger for tamper-proof history.
+
+================================================================================
+END OF DOCUMENT
+================================================================================
