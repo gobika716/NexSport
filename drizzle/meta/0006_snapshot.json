@@ -46,16 +46,12 @@
       "indexes": {
         "idx_elo_user": {
           "name": "idx_elo_user",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         },
         "idx_elo_recorded": {
           "name": "idx_elo_recorded",
-          "columns": [
-            "recorded_at"
-          ],
+          "columns": ["recorded_at"],
           "isUnique": false
         }
       },
@@ -64,12 +60,8 @@
           "name": "elo_history_user_id_users_id_fk",
           "tableFrom": "elo_history",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -176,16 +168,12 @@
       "indexes": {
         "idx_feedback_user": {
           "name": "idx_feedback_user",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         },
         "idx_feedback_room": {
           "name": "idx_feedback_room",
-          "columns": [
-            "room_id"
-          ],
+          "columns": ["room_id"],
           "isUnique": false
         }
       },
@@ -194,12 +182,8 @@
           "name": "feedback_room_id_rooms_id_fk",
           "tableFrom": "feedback",
           "tableTo": "rooms",
-          "columnsFrom": [
-            "room_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["room_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -207,12 +191,8 @@
           "name": "feedback_user_id_users_id_fk",
           "tableFrom": "feedback",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -305,9 +285,7 @@
       "indexes": {
         "idx_matches_room": {
           "name": "idx_matches_room",
-          "columns": [
-            "room_id"
-          ],
+          "columns": ["room_id"],
           "isUnique": false
         }
       },
@@ -316,12 +294,8 @@
           "name": "matches_room_id_rooms_id_fk",
           "tableFrom": "matches",
           "tableTo": "rooms",
-          "columnsFrom": [
-            "room_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["room_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -409,16 +383,12 @@
       "indexes": {
         "idx_messages_room": {
           "name": "idx_messages_room",
-          "columns": [
-            "room_id"
-          ],
+          "columns": ["room_id"],
           "isUnique": false
         },
         "idx_messages_created": {
           "name": "idx_messages_created",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -427,12 +397,8 @@
           "name": "messages_room_id_rooms_id_fk",
           "tableFrom": "messages",
           "tableTo": "rooms",
-          "columnsFrom": [
-            "room_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["room_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -440,12 +406,8 @@
           "name": "messages_user_id_users_id_fk",
           "tableFrom": "messages",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -623,9 +585,7 @@
       "indexes": {
         "idx_assessments_user": {
           "name": "idx_assessments_user",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         }
       },
@@ -634,12 +594,8 @@
           "name": "player_assessments_user_id_users_id_fk",
           "tableFrom": "player_assessments",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -730,16 +686,12 @@
       "indexes": {
         "idx_metrics_room": {
           "name": "idx_metrics_room",
-          "columns": [
-            "room_id"
-          ],
+          "columns": ["room_id"],
           "isUnique": false
         },
         "idx_metrics_user": {
           "name": "idx_metrics_user",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         }
       },
@@ -748,12 +700,8 @@
           "name": "player_metrics_user_id_users_id_fk",
           "tableFrom": "player_metrics",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -761,12 +709,8 @@
           "name": "player_metrics_room_id_rooms_id_fk",
           "tableFrom": "player_metrics",
           "tableTo": "rooms",
-          "columnsFrom": [
-            "room_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["room_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -824,16 +768,12 @@
       "indexes": {
         "idx_room_members_room": {
           "name": "idx_room_members_room",
-          "columns": [
-            "room_id"
-          ],
+          "columns": ["room_id"],
           "isUnique": false
         },
         "idx_room_members_user": {
           "name": "idx_room_members_user",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         }
       },
@@ -842,12 +782,8 @@
           "name": "room_members_room_id_rooms_id_fk",
           "tableFrom": "room_members",
           "tableTo": "rooms",
-          "columnsFrom": [
-            "room_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["room_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -855,12 +791,8 @@
           "name": "room_members_user_id_users_id_fk",
           "tableFrom": "room_members",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1148,9 +1080,7 @@
       "indexes": {
         "users_email_unique": {
           "name": "users_email_unique",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         }
       },

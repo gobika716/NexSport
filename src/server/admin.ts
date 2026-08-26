@@ -51,7 +51,12 @@ export interface AdminDetailsPayload {
   } | null;
 }
 
-function mapUserRow(row: typeof schema.users.$inferSelect & { selectedGame?: string | null; experienceLevel?: string | null }): AdminUserRow {
+function mapUserRow(
+  row: typeof schema.users.$inferSelect & {
+    selectedGame?: string | null;
+    experienceLevel?: string | null;
+  },
+): AdminUserRow {
   return {
     id: row.id,
     name: row.name,
@@ -120,7 +125,7 @@ export const listUsersFn = createServerFn({ method: "POST" })
     const assessments = db.select().from(schema.playerAssessments).all();
     const assessmentMap = new Map(assessments.map((a) => [a.userId, a]));
 
-    let query = db.select().from(schema.users);
+    const query = db.select().from(schema.users);
 
     const conditions: SQL[] = [];
     if (search) {
@@ -146,17 +151,27 @@ export const listUsersFn = createServerFn({ method: "POST" })
       return userSport === sport;
     });
 
-    const sports = Array.from(new Set(assessments.map((a) => a.selectedGame))).filter(Boolean) as string[];
+    const sports = Array.from(new Set(assessments.map((a) => a.selectedGame))).filter(
+      Boolean,
+    ) as string[];
 
     const orderFn = sortOrder === "asc" ? asc : desc;
     if (sortBy === "name") {
       rows.sort(orderFn((a, b) => a.name.localeCompare(b.name)));
     } else {
-      rows.sort(orderDesc((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
+      rows.sort(
+        orderDesc((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
+      );
     }
 
     return {
-      users: rows.map((r) => mapUserRow({ ...r, selectedGame: assessmentMap.get(r.id)?.selectedGame ?? null, experienceLevel: assessmentMap.get(r.id)?.experienceLevel ?? null })),
+      users: rows.map((r) =>
+        mapUserRow({
+          ...r,
+          selectedGame: assessmentMap.get(r.id)?.selectedGame ?? null,
+          experienceLevel: assessmentMap.get(r.id)?.experienceLevel ?? null,
+        }),
+      ),
       sports,
     };
   });
@@ -178,7 +193,11 @@ export const getUserDetailsFn = createServerFn({ method: "GET" })
       .get();
 
     return {
-      user: mapUserRow({ ...user, selectedGame: assessment?.selectedGame ?? null, experienceLevel: assessment?.experienceLevel ?? null }),
+      user: mapUserRow({
+        ...user,
+        selectedGame: assessment?.selectedGame ?? null,
+        experienceLevel: assessment?.experienceLevel ?? null,
+      }),
       assessment: assessment
         ? {
             selectedGame: assessment.selectedGame,
@@ -217,7 +236,15 @@ export const updateCertificateStatusFn = createServerFn({ method: "POST" })
 
     const now = new Date().toISOString();
     db.update(schema.users)
-      .set({ certificateStatus: data.status, accountStatus: data.status === "verified" ? "active" : data.status === "rejected" ? "suspended" : "pending" })
+      .set({
+        certificateStatus: data.status,
+        accountStatus:
+          data.status === "verified"
+            ? "active"
+            : data.status === "rejected"
+              ? "suspended"
+              : "pending",
+      })
       .where(eq(schema.users.id, data.userId))
       .run();
 
@@ -229,7 +256,11 @@ export const updateCertificateStatusFn = createServerFn({ method: "POST" })
 
     if (assessment) {
       db.update(schema.playerAssessments)
-        .set({ certificateStatus: data.status, verifiedAt: data.status === "verified" ? now : null, updatedAt: now })
+        .set({
+          certificateStatus: data.status,
+          verifiedAt: data.status === "verified" ? now : null,
+          updatedAt: now,
+        })
         .where(eq(schema.playerAssessments.userId, data.userId))
         .run();
     }

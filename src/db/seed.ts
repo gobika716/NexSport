@@ -34,7 +34,8 @@ async function seed() {
     createdAt: new Date().toISOString(),
   });
 
-  await db.insert(schema.playerAssessments)
+  await db
+    .insert(schema.playerAssessments)
     .values({
       id: "assessment-u-demo",
       userId: "u-demo",

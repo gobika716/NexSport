@@ -199,8 +199,19 @@ function RoomDetailsPage() {
               {room.lat != null ? "Live GPS coordinates" : "Mock GPS coordinates for the prototype"}
             </p>
             <div className="relative mt-4 h-40 overflow-hidden rounded-2xl bg-secondary">
-              <div className="absolute inset-0 opacity-70" style={{ backgroundImage: "linear-gradient(0deg, rgba(32,183,243,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(32,183,243,.18) 1px, transparent 1px)", backgroundSize: "26px 26px" }} />
-              <span className="absolute top-1/2 left-1/2 grid h-10 w-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-sky/20"><span className="grid h-7 w-7 place-items-center rounded-full bg-navy text-white"><MapPin size={15} /></span></span>
+              <div
+                className="absolute inset-0 opacity-70"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(0deg, rgba(32,183,243,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(32,183,243,.18) 1px, transparent 1px)",
+                  backgroundSize: "26px 26px",
+                }}
+              />
+              <span className="absolute top-1/2 left-1/2 grid h-10 w-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-sky/20">
+                <span className="grid h-7 w-7 place-items-center rounded-full bg-navy text-white">
+                  <MapPin size={15} />
+                </span>
+              </span>
             </div>
             <ul className="mt-4 space-y-2 text-sm text-gray-text">
               <li className="flex items-center gap-2">
@@ -208,7 +219,8 @@ function RoomDetailsPage() {
               </li>
               {room.lat != null && room.lng != null ? (
                 <li className="flex items-center gap-2">
-                  <Navigation size={15} className="text-sky" /> {room.lat.toFixed(4)}° N, {room.lng.toFixed(4)}° E
+                  <Navigation size={15} className="text-sky" /> {room.lat.toFixed(4)}° N,{" "}
+                  {room.lng.toFixed(4)}° E
                 </li>
               ) : null}
               {myPosition && room.lat != null && room.lng != null ? (
@@ -221,7 +233,8 @@ function RoomDetailsPage() {
                 </li>
               ) : (
                 <li className="flex items-center gap-2">
-                  <Navigation size={15} className="text-sky" /> {room.distanceKm} km from you · approx {Math.max(5, Math.round(room.distanceKm * 4))} min drive
+                  <Navigation size={15} className="text-sky" /> {room.distanceKm} km from you ·
+                  approx {Math.max(5, Math.round(room.distanceKm * 4))} min drive
                 </li>
               )}
             </ul>
