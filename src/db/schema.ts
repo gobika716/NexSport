@@ -14,6 +14,11 @@ export const users = sqliteTable("users", {
   streak: integer("streak").notNull().default(0),
   matchesPlayed: integer("matches_played").notNull().default(0),
   hoursOnCourt: integer("hours_on_court").notNull().default(0),
+  skillLevel: text("skill_level"),
+  profilePhoto: text("profile_photo"),
+  certificateStatus: text("certificate_status"),
+  accountStatus: text("account_status").notNull().default("active"),
+  isAdmin: integer("is_admin", { mode: "boolean" }).notNull().default(false),
   createdAt: text("created_at").notNull(),
 });
 
@@ -42,6 +47,8 @@ export const playerAssessments = sqliteTable(
     hasCertificate: integer("has_certificate", { mode: "boolean" }).notNull().default(false),
     certificateImage: text("certificate_image"),
     certificatePath: text("certificate_path"),
+    certificateStatus: text("certificate_status"),
+    verifiedAt: text("verified_at"),
     videoPath: text("video_path"),
     createdAt: text("created_at").notNull(),
     updatedAt: text("updated_at").notNull(),

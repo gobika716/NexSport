@@ -27,8 +27,42 @@ async function seed() {
     reliability: 97,
     streak: 5,
     hoursOnCourt: 24,
+    skillLevel: "Intermediate",
+    certificateStatus: "verified",
+    accountStatus: "active",
+    isAdmin: true,
     createdAt: new Date().toISOString(),
   });
+
+  await db.insert(schema.playerAssessments)
+    .values({
+      id: "assessment-u-demo",
+      userId: "u-demo",
+      selectedGame: "cricket",
+      experienceLevel: "Intermediate",
+      yearsOfExperience: "3–5 years",
+      playingFrequency: "3–4 times a week",
+      tournamentExperience: "State level",
+      preferredRole: "All-rounder",
+      preferredEvent: null,
+      playingStyle: "All-round",
+      strengths: JSON.stringify(["Batting", "Bowling", "Fielding"]),
+      improvementAreas: JSON.stringify(["Running Between Wickets", "Bowling"]),
+      matchesPerMonth: "6–10",
+      answers: JSON.stringify({}),
+      initialSkillScore: 65,
+      initialSkillConfidence: "High",
+      verificationType: "Yes",
+      hasCertificate: true,
+      certificateImage: null,
+      certificatePath: null,
+      certificateStatus: "verified",
+      verifiedAt: new Date().toISOString(),
+      videoPath: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    })
+    .run();
 
   console.log("Seeding complete ✅ (demo user only)");
 }

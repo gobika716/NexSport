@@ -17,8 +17,14 @@ export interface AuthUser {
   id: string;
   name: string;
   email: string;
+  mobileNumber?: string | null;
   city?: string;
   elo?: number;
+  skillLevel?: string | null;
+  profilePhoto?: string | null;
+  certificateStatus?: string | null;
+  accountStatus?: string | null;
+  isAdmin?: boolean;
 }
 
 interface AuthContextValue {
@@ -122,7 +128,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: res.user.id,
         name: res.user.name,
         email: res.user.email,
+        mobileNumber: res.user.mobileNumber,
         elo: res.user.elo,
+        skillLevel: res.user.skillLevel,
+        profilePhoto: res.user.profilePhoto,
+        certificateStatus: res.user.certificateStatus,
+        accountStatus: res.user.accountStatus,
+        isAdmin: res.user.isAdmin,
         ...(res.user.city ? { city: res.user.city } : {}),
       };
       applyUser(u);
@@ -178,7 +190,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: res.user.id,
         name: res.user.name,
         email: res.user.email,
+        mobileNumber: res.user.mobileNumber,
         elo: res.user.elo,
+        skillLevel: res.user.skillLevel,
+        profilePhoto: res.user.profilePhoto,
+        certificateStatus: res.user.certificateStatus,
+        accountStatus: res.user.accountStatus,
+        isAdmin: res.user.isAdmin,
         ...(res.user.city ? { city: res.user.city } : {}),
       };
       applyUser(u);

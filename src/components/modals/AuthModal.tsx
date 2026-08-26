@@ -8,6 +8,14 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { useRouter } from "@tanstack/react-router";
 import { gameNames, gameQuestions, type GameId } from "@/data/gameQuestions";
+import badminton from "@/assets/sport-badminton.jpg";
+import cricket from "@/assets/sport-cricket.jpg";
+import football from "@/assets/sport-football.jpg";
+import basketball from "@/assets/sport-basketball.jpg";
+import volleyball from "@/assets/sport-volleyball.jpg";
+import tennis from "@/assets/sport-tennis.jpg";
+import tabletennis from "@/assets/sport-tabletennis.jpg";
+import kabaddi from "@/assets/sport-kabaddi.jpg";
 
 type Mode = "login" | "signup";
 type SignupStep = "account" | "sport" | "experience" | "assessment" | "verification";
@@ -29,14 +37,14 @@ const inputClass =
 const steps: SignupStep[] = ["account", "sport", "experience", "assessment", "verification"];
 const stepLabels = ["Account", "Sport", "Experience", "Assessment", "Verification"];
 const gameImages: Record<GameId, string> = {
-  badminton: "/assets/sport-badminton-CHYwYDol.jpg",
-  cricket: "/assets/sport-cricket-J2GFzZjy.jpg",
-  football: "/assets/sport-football-B7if5G0d.jpg",
-  basketball: "/assets/sport-basketball-B3CRyQI-.jpg",
-  volleyball: "/assets/sport-volleyball-DpGr99go.jpg",
-  tennis: "/assets/sport-tennis-BNKGwvqj.jpg",
-  "table-tennis": "/assets/sport-tabletennis-rpt_lFMq.jpg",
-  kabaddi: "/assets/sport-kabaddi-DrceWnJH.jpg",
+  badminton,
+  cricket,
+  football,
+  basketball,
+  volleyball,
+  tennis,
+  "table-tennis": tabletennis,
+  kabaddi,
 };
 
 function FieldError({ message }: { message?: string }) {

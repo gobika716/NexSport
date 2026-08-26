@@ -11,8 +11,13 @@ export interface AuthResult {
     id: string;
     name: string;
     email: string;
+    mobileNumber?: string | null;
     city: string | null;
     elo: number;
+    skillLevel?: string | null;
+    profilePhoto?: string | null;
+    certificateStatus?: string | null;
+    accountStatus?: string | null;
     bio?: string | null;
     fairPlay?: number;
     reliability?: number;
@@ -28,8 +33,14 @@ function toUser(row: typeof schema.users.$inferSelect) {
     id: row.id,
     name: row.name,
     email: row.email,
+    mobileNumber: row.mobileNumber,
     city: row.city,
     elo: row.elo,
+    skillLevel: row.skillLevel,
+    profilePhoto: row.profilePhoto,
+    certificateStatus: row.certificateStatus,
+    accountStatus: row.accountStatus,
+    isAdmin: row.isAdmin,
     bio: row.bio ?? null,
     fairPlay: row.fairPlay,
     reliability: row.reliability,
@@ -54,8 +65,13 @@ export const loginFn = createServerFn({ method: "POST" })
         id: "u-demo",
         name: "Demo Player",
         email,
+        mobileNumber: "9999999999",
         city: "Perundurai, Erode",
         elo: 1388,
+        skillLevel: "Intermediate",
+        profilePhoto: null,
+        certificateStatus: "verified",
+        accountStatus: "active",
       };
       return { ok: true, user: demoUser } satisfies AuthResult;
     }
@@ -142,6 +158,8 @@ export const signupFn = createServerFn({ method: "POST" })
             verificationType: data.verificationType,
           })
         : { initialSkillScore: 0, initialSkillConfidence: "Low" as const };
+    const certificateStatus = data.verificationType === "Yes" ? "pending" : "not_provided";
+    const accountStatus = data.verificationType === "Yes" ? "pending" : "active";
     const user = {
       id: `u-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       name: name.trim(),
@@ -150,6 +168,10 @@ export const signupFn = createServerFn({ method: "POST" })
       passwordHash,
       city: city?.trim() || null,
       elo: 1200 + Math.round(assessment.initialSkillScore * 1.2),
+      skillLevel: data.experienceLevel ?? null,
+      profilePhoto: null,
+      certificateStatus,
+      accountStatus,
       matchesPlayed: 0,
       streak: 0,
       fairPlay: 0,
@@ -185,6 +207,8 @@ export const signupFn = createServerFn({ method: "POST" })
           hasCertificate,
           certificateImage,
           certificatePath: null,
+          certificateStatus: certificateStatus === "pending" ? "pending" : null,
+          verifiedAt: null,
           videoPath: null,
           createdAt: user.createdAt,
           updatedAt: user.createdAt,
@@ -198,8 +222,13 @@ export const signupFn = createServerFn({ method: "POST" })
         id: user.id,
         name: user.name,
         email: user.email,
+        mobileNumber: user.mobileNumber,
         city: user.city,
         elo: user.elo,
+        skillLevel: user.skillLevel,
+        profilePhoto: user.profilePhoto,
+        certificateStatus: user.certificateStatus,
+        accountStatus: user.accountStatus,
         bio: null,
         fairPlay: 0,
         reliability: 0,
