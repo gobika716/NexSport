@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { eq, asc } from "drizzle-orm";
 import { db, schema } from "@/db/client";
+import { gameNames } from "@/data/gameQuestions";
+import { sports } from "@/data/sportsData";
 
 export interface EloTrendPoint {
   month: string;
@@ -54,6 +56,20 @@ export interface AnalyticsPayload {
   eloTrend: EloTrendPoint[];
   sportStats: SportStatRow[];
   matchHistory: MatchHistoryRow[];
+}
+
+const sportNameMap = new Map<string, string>();
+for (const s of sports) {
+  sportNameMap.set(s.id.toLowerCase(), s.name);
+  sportNameMap.set(s.name.toLowerCase(), s.name);
+}
+
+function sportLabel(raw: string): string {
+  const trimmed = raw.trim();
+  const found = sportNameMap.get(trimmed.toLowerCase());
+  if (found) return found;
+  if (trimmed.length > 0) return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+  return trimmed;
 }
 
 function bandFromElo(elo: number): string {
@@ -113,7 +129,7 @@ export const getAnalyticsFn = createServerFn({ method: "GET" })
     const eloTrend: EloTrendPoint[] = historyRows.map((h) => ({
       month: new Date(h.recordedAt).toLocaleDateString([], { month: "short" }),
       elo: h.elo,
-      sport: h.sport,
+      sport: sportLabel(h.sport),
     }));
 
     // Match history
@@ -121,7 +137,7 @@ export const getAnalyticsFn = createServerFn({ method: "GET" })
     const matchHistory: MatchHistoryRow[] = allMatches.map((m) => ({
       id: m.id,
       date: new Date(m.date).toLocaleDateString([], { day: "numeric", month: "short" }),
-      sport: m.sport,
+      sport: sportLabel(m.sport),
       venue: m.venue,
       opponent: m.opponent,
       score: m.score,
@@ -135,8 +151,9 @@ export const getAnalyticsFn = createServerFn({ method: "GET" })
     const sportMap = new Map<string, SportStatRow>();
     for (const fb of allFeedback) {
       if (fb.userId !== data.userId) continue;
-      const cur = sportMap.get(fb.sport) ?? {
-        sport: fb.sport,
+      const normalizedSport = sportLabel(fb.sport);
+      const cur = sportMap.get(normalizedSport) ?? {
+        sport: normalizedSport,
         elo: user.elo,
         played: 0,
         wins: 0,
@@ -147,7 +164,7 @@ export const getAnalyticsFn = createServerFn({ method: "GET" })
       cur.played += 1;
       if (fb.result === "Win") cur.wins += 1;
       if (fb.result === "Loss") cur.losses += 1;
-      sportMap.set(fb.sport, cur);
+      sportMap.set(normalizedSport, cur);
     }
 
     // Seed from rooms the user is part of
@@ -160,9 +177,10 @@ export const getAnalyticsFn = createServerFn({ method: "GET" })
     const roomRows = db.select().from(schema.rooms).all();
     for (const r of roomRows) {
       if (!memberRoomIds.includes(r.id)) continue;
-      if (!sportMap.has(r.sport)) {
-        sportMap.set(r.sport, {
-          sport: r.sport,
+      const normalizedRoomSport = sportLabel(r.sport);
+      if (!sportMap.has(normalizedRoomSport)) {
+        sportMap.set(normalizedRoomSport, {
+          sport: normalizedRoomSport,
           elo: user.elo,
           played: 0,
           wins: 0,
