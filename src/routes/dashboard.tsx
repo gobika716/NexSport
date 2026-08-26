@@ -28,7 +28,14 @@ import { AiCoachPanel } from "@/components/dashboard/AiCoachPanel";
 import { FeedbackPanel } from "@/components/dashboard/FeedbackPanel";
 import { cn } from "@/lib/utils";
 import { getAnalyticsFn } from "@/server/analytics";
-import { getAdminStatsFn, listUsersFn, getUserDetailsFn, updateCertificateStatusFn, type AdminDetailsPayload, type AdminUserRow } from "@/server/admin";
+import {
+  getAdminStatsFn,
+  listUsersFn,
+  getUserDetailsFn,
+  updateCertificateStatusFn,
+  type AdminDetailsPayload,
+  type AdminUserRow,
+} from "@/server/admin";
 import type { AnalyticsPayload } from "@/server/analytics";
 
 const title = "Performance Dashboard — Track Your NexSport Progress";
@@ -176,7 +183,14 @@ function DashboardPage() {
   });
 
   const { data: adminUsersData, refetch: refetchUsers } = useQuery({
-    queryKey: ["adminUsers", adminSearch, adminSportFilter, adminCertFilter, adminSortBy, adminSortOrder],
+    queryKey: [
+      "adminUsers",
+      adminSearch,
+      adminSportFilter,
+      adminCertFilter,
+      adminSortBy,
+      adminSortOrder,
+    ],
     queryFn: () =>
       listUsersFn({
         data: {
@@ -219,19 +233,37 @@ function DashboardPage() {
 
             {payload?.assessment ? (
               <section className="card-soft mt-6 p-6">
-                <p className="text-xs font-semibold tracking-wide text-sky uppercase">Player profile</p>
-                <h2 className="mt-1 font-display text-xl font-bold text-ink">Welcome, {user?.name}!</h2>
-                <p className="mt-1 text-sm text-gray-text">Your NexSport player profile is ready.</p>
+                <p className="text-xs font-semibold tracking-wide text-sky uppercase">
+                  Player profile
+                </p>
+                <h2 className="mt-1 font-display text-xl font-bold text-ink">
+                  Welcome, {user?.name}!
+                </h2>
+                <p className="mt-1 text-sm text-gray-text">
+                  Your NexSport player profile is ready.
+                </p>
                 <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
                   <ProfileMetric label="Sport" value={payload.assessment.selectedGame} />
                   <ProfileMetric label="Experience" value={payload.assessment.experienceLevel} />
-                  <ProfileMetric label="Initial skill" value={`${payload.assessment.initialSkillScore} / 100`} />
-                  <ProfileMetric label="Confidence" value={payload.assessment.initialSkillConfidence} />
-                  <ProfileMetric label="Certificate" value={payload.assessment.hasCertificate ? "Verified" : "Not provided"} />
+                  <ProfileMetric
+                    label="Initial skill"
+                    value={`${payload.assessment.initialSkillScore} / 100`}
+                  />
+                  <ProfileMetric
+                    label="Confidence"
+                    value={payload.assessment.initialSkillConfidence}
+                  />
+                  <ProfileMetric
+                    label="Certificate"
+                    value={payload.assessment.hasCertificate ? "Verified" : "Not provided"}
+                  />
                 </div>
                 <div className="mt-5 grid gap-4 sm:grid-cols-2">
                   <ProfileList label="Strengths" values={payload.assessment.answers.strengths} />
-                  <ProfileList label="Areas to improve" values={payload.assessment.answers.improvementAreas} />
+                  <ProfileList
+                    label="Areas to improve"
+                    values={payload.assessment.answers.improvementAreas}
+                  />
                 </div>
               </section>
             ) : null}
@@ -416,7 +448,9 @@ function DashboardPage() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="font-display text-xl font-bold text-ink">Admin Dashboard</h2>
-                <p className="mt-1 text-xs text-gray-text">Manage verified signups, certificates and player records.</p>
+                <p className="mt-1 text-xs text-gray-text">
+                  Manage verified signups, certificates and player records.
+                </p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <input
@@ -432,7 +466,9 @@ function DashboardPage() {
                 >
                   <option value="all">All Sports</option>
                   {adminSports.map((sport) => (
-                    <option key={sport} value={sport}>{sport}</option>
+                    <option key={sport} value={sport}>
+                      {sport}
+                    </option>
                   ))}
                 </select>
                 <select
@@ -465,17 +501,39 @@ function DashboardPage() {
             </div>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-              <AdminStatCard label="Total Users" value={String(adminStats?.totalUsers ?? 0)} icon="Users" />
-              <AdminStatCard label="Verified Players" value={String(adminStats?.verifiedPlayers ?? 0)} icon="ShieldCheck" />
-              <AdminStatCard label="Pending Verification" value={String(adminStats?.pendingVerification ?? 0)} icon="Clock" />
-              <AdminStatCard label="Rejected Certificates" value={String(adminStats?.rejectedCertificates ?? 0)} icon="XCircle" />
-              <AdminStatCard label="Total Sports" value={String(adminStats?.totalSports ?? 0)} icon="Trophy" />
+              <AdminStatCard
+                label="Total Users"
+                value={String(adminStats?.totalUsers ?? 0)}
+                icon="Users"
+              />
+              <AdminStatCard
+                label="Verified Players"
+                value={String(adminStats?.verifiedPlayers ?? 0)}
+                icon="ShieldCheck"
+              />
+              <AdminStatCard
+                label="Pending Verification"
+                value={String(adminStats?.pendingVerification ?? 0)}
+                icon="Clock"
+              />
+              <AdminStatCard
+                label="Rejected Certificates"
+                value={String(adminStats?.rejectedCertificates ?? 0)}
+                icon="XCircle"
+              />
+              <AdminStatCard
+                label="Total Sports"
+                value={String(adminStats?.totalSports ?? 0)}
+                icon="Trophy"
+              />
             </div>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {(adminStats?.sportWiseCounts ?? []).slice(0, 8).map((item) => (
                 <div key={item.sport} className="rounded-2xl border border-border p-4">
-                  <p className="text-sm font-semibold text-ink capitalize">{item.sport.replace(/-/g, " ")}</p>
+                  <p className="text-sm font-semibold text-ink capitalize">
+                    {item.sport.replace(/-/g, " ")}
+                  </p>
                   <p className="mt-1 text-2xl font-bold text-navy">{item.players}</p>
                   <p className="text-xs text-gray-text">Players</p>
                 </div>
@@ -502,19 +560,32 @@ function DashboardPage() {
                 <tbody>
                   {adminUsers.length === 0 ? (
                     <tr>
-                      <td colSpan={11} className="px-4 py-6 text-sm text-gray-text">No users found.</td>
+                      <td colSpan={11} className="px-4 py-6 text-sm text-gray-text">
+                        No users found.
+                      </td>
                     </tr>
                   ) : (
                     adminUsers.map((u) => (
-                      <tr key={u.id} className="border-t border-border/70 transition-colors hover:bg-secondary/60">
+                      <tr
+                        key={u.id}
+                        className="border-t border-border/70 transition-colors hover:bg-secondary/60"
+                      >
                         <td className="px-4 py-4 text-sm font-mono text-gray-text">{u.id}</td>
                         <td className="px-4 py-4 text-sm font-semibold text-ink">{u.name}</td>
                         <td className="px-4 py-4 text-sm text-gray-text">{u.email}</td>
-                        <td className="px-4 py-4 text-sm text-gray-text">{u.mobileNumber ?? "—"}</td>
-                        <td className="px-4 py-4 text-sm text-gray-text capitalize">{(u.sport ?? u.skillLevel ?? "—").replace(/-/g, " ")}</td>
-                        <td className="px-4 py-4 text-sm text-gray-text capitalize">{u.skillLevel ?? "—"}</td>
+                        <td className="px-4 py-4 text-sm text-gray-text">
+                          {u.mobileNumber ?? "—"}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-text capitalize">
+                          {(u.sport ?? u.skillLevel ?? "—").replace(/-/g, " ")}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-text capitalize">
+                          {u.skillLevel ?? "—"}
+                        </td>
                         <td className="px-4 py-4 text-sm text-gray-text">{u.city ?? "—"}</td>
-                        <td className="px-4 py-4 text-sm text-gray-text capitalize">{(u.certificateStatus ?? "not_provided").replace(/_/g, " ")}</td>
+                        <td className="px-4 py-4 text-sm text-gray-text capitalize">
+                          {(u.certificateStatus ?? "not_provided").replace(/_/g, " ")}
+                        </td>
                         <td className="px-4 py-4 text-sm">
                           <span
                             className={cn(
@@ -616,7 +687,13 @@ function UserDetailsModal({
             <h3 className="font-display text-lg font-bold text-ink">User Details</h3>
             <p className="text-xs text-gray-text">{u.id}</p>
           </div>
-          <button type="button" onClick={onClose} className="text-xs font-semibold text-gray-text hover:text-ink">Close</button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-xs font-semibold text-gray-text hover:text-ink"
+          >
+            Close
+          </button>
         </div>
 
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -663,7 +740,11 @@ function UserDetailsModal({
         {a?.certificateImage ? (
           <div className="mt-5">
             <p className="text-sm font-semibold text-ink">Certificate Preview</p>
-            <img src={a.certificateImage} alt="Certificate" className="mt-2 max-h-60 rounded-xl border border-border object-contain" />
+            <img
+              src={a.certificateImage}
+              alt="Certificate"
+              className="mt-2 max-h-60 rounded-xl border border-border object-contain"
+            />
           </div>
         ) : null}
 
@@ -708,10 +789,22 @@ function DetailField({ label, value }: { label: string; value: string }) {
 }
 
 function ProfileMetric({ label, value }: { label: string; value: string }) {
-  return <div className="rounded-2xl bg-secondary/60 p-4"><p className="text-xs text-gray-text">{label}</p><p className="mt-1 text-sm font-bold capitalize text-ink">{value}</p></div>;
+  return (
+    <div className="rounded-2xl bg-secondary/60 p-4">
+      <p className="text-xs text-gray-text">{label}</p>
+      <p className="mt-1 text-sm font-bold capitalize text-ink">{value}</p>
+    </div>
+  );
 }
 
 function ProfileList({ label, values }: { label: string; values: string | string[] | undefined }) {
   const list = Array.isArray(values) ? values : values ? [values] : [];
-  return <div><p className="text-sm font-semibold text-ink">{label}</p><p className="mt-2 text-sm text-gray-text">{list.length ? list.join(" · ") : "Not provided"}</p></div>;
+  return (
+    <div>
+      <p className="text-sm font-semibold text-ink">{label}</p>
+      <p className="mt-2 text-sm text-gray-text">
+        {list.length ? list.join(" · ") : "Not provided"}
+      </p>
+    </div>
+  );
 }

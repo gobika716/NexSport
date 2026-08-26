@@ -174,7 +174,9 @@ function ProfilePage() {
 
         {assessment ? (
           <section className="card-soft mt-6 p-6">
-            <h2 className="font-display text-base font-semibold text-ink">Initial player profile</h2>
+            <h2 className="font-display text-base font-semibold text-ink">
+              Initial player profile
+            </h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
               {[
                 ["Sport", assessment.selectedGame],
@@ -182,9 +184,31 @@ function ProfilePage() {
                 ["Initial skill", `${assessment.initialSkillScore} / 100`],
                 ["Confidence", assessment.initialSkillConfidence],
                 ["Certificate", assessment.hasCertificate ? "Verified" : "Not Provided"],
-              ].map(([label, value]) => <div key={label} className="rounded-2xl bg-secondary/60 p-4"><p className="text-xs text-gray-text">{label}</p><p className="mt-1 text-sm font-bold capitalize text-ink">{value}</p></div>)}
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-2xl bg-secondary/60 p-4">
+                  <p className="text-xs text-gray-text">{label}</p>
+                  <p className="mt-1 text-sm font-bold capitalize text-ink">{value}</p>
+                </div>
+              ))}
             </div>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2"><div><p className="text-sm font-semibold text-ink">Strengths</p><p className="mt-1 text-sm text-gray-text">{Array.isArray(assessment.answers.strengths) ? assessment.answers.strengths.join(" · ") : "Not provided"}</p></div><div><p className="text-sm font-semibold text-ink">Areas to improve</p><p className="mt-1 text-sm text-gray-text">{Array.isArray(assessment.answers.improvementAreas) ? assessment.answers.improvementAreas.join(" · ") : "Not provided"}</p></div></div>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <div>
+                <p className="text-sm font-semibold text-ink">Strengths</p>
+                <p className="mt-1 text-sm text-gray-text">
+                  {Array.isArray(assessment.answers.strengths)
+                    ? assessment.answers.strengths.join(" · ")
+                    : "Not provided"}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-ink">Areas to improve</p>
+                <p className="mt-1 text-sm text-gray-text">
+                  {Array.isArray(assessment.answers.improvementAreas)
+                    ? assessment.answers.improvementAreas.join(" · ")
+                    : "Not provided"}
+                </p>
+              </div>
+            </div>
           </section>
         ) : null}
 

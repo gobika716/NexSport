@@ -56,6 +56,31 @@ export const playerAssessments = sqliteTable(
   (table) => [index("idx_assessments_user").on(table.userId)],
 );
 
+export const venues = sqliteTable(
+  "venues",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    area: text("area").notNull(),
+    address: text("address").notNull(),
+    city: text("city").notNull().default("Erode"),
+    lat: real("lat"),
+    lng: real("lng"),
+    confidence: text("confidence", {
+      enum: ["high", "medium", "low"],
+    })
+      .notNull()
+      .default("medium"),
+    source: text("source"),
+    isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+    createdAt: text("created_at").notNull(),
+  },
+  (table) => [
+    index("idx_venues_city").on(table.city),
+    index("idx_venues_active").on(table.isActive),
+  ],
+);
+
 export const rooms = sqliteTable("rooms", {
   id: text("id").primaryKey(),
   sport: text("sport").notNull(),
@@ -75,6 +100,9 @@ export const rooms = sqliteTable("rooms", {
   description: text("description"),
   lat: real("lat"),
   lng: real("lng"),
+  venueId: text("venue_id").references(() => venues.id, { onDelete: "set null" }),
+  venueLat: real("venue_lat"),
+  venueLng: real("venue_lng"),
   createdAt: text("created_at").notNull(),
 });
 
@@ -211,3 +239,4 @@ export type FeedbackRow = typeof feedback.$inferSelect;
 export type PlayerMetrics = typeof playerMetrics.$inferSelect;
 export type EloHistory = typeof eloHistory.$inferSelect;
 export type Match = typeof matches.$inferSelect;
+export type Venue = typeof venues.$inferSelect;

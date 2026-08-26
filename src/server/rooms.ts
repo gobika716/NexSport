@@ -65,6 +65,9 @@ export const createRoomFn = createServerFn({ method: "POST" })
       description?: string | undefined;
       lat?: number | null | undefined;
       lng?: number | null | undefined;
+      venueId?: string | null | undefined;
+      venueLat?: number | null | undefined;
+      venueLng?: number | null | undefined;
     }) => d,
   )
   .handler(async ({ data }) => {
@@ -74,6 +77,9 @@ export const createRoomFn = createServerFn({ method: "POST" })
       hostUserId: data.hostUserId ?? null,
       lat: data.lat ?? null,
       lng: data.lng ?? null,
+      venueId: data.venueId ?? null,
+      venueLat: data.venueLat ?? null,
+      venueLng: data.venueLng ?? null,
       filled: 1,
       avgElo: 1200,
       status: "open" as const,

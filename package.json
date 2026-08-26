@@ -13,7 +13,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/db/migrate.ts",
     "db:seed": "tsx src/db/seed.ts",
-    "db:setup": "tsx src/db/migrate.ts && tsx src/db/seed.ts"
+    "db:seed-venues": "tsx src/db/seed-venues.ts",
+    "db:setup": "tsx src/db/migrate.ts && tsx src/db/seed.ts && tsx src/db/seed-venues.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -57,12 +58,14 @@
     "drizzle-orm": "^0.45.2",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.575.0",
     "motion": "^12.43.0",
     "react": "^19.2.0",
     "react-day-picker": "^9.14.0",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.71.2",
+    "react-leaflet": "^5.0.0",
     "react-resizable-panels": "^4.6.5",
     "recharts": "^2.15.4",
     "sonner": "^2.0.7",
@@ -78,6 +81,7 @@
     "@lovable.dev/vite-tanstack-config": "2.9.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/better-sqlite3": "^9.6.0",
+    "@types/leaflet": "^1.9.22",
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",

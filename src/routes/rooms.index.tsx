@@ -75,6 +75,9 @@ function RoomsPage() {
     date: string;
     players: number;
     skill: string;
+    venueId?: string | null;
+    venueLat?: number | null;
+    venueLng?: number | null;
   }) => {
     const created = await createRoomFn({
       data: {
@@ -95,6 +98,9 @@ function RoomsPage() {
         ...(user?.id ? { hostUserId: user.id } : {}),
         description: "Your room is live — nearby players have been notified.",
         ...(myPosition ? { lat: myPosition.lat, lng: myPosition.lng } : {}),
+        ...(room.venueId ? { venueId: room.venueId } : {}),
+        ...(room.venueLat != null ? { venueLat: room.venueLat } : {}),
+        ...(room.venueLng != null ? { venueLng: room.venueLng } : {}),
       },
     });
     setJoinedIds((prev) => [...prev, created.id]);
